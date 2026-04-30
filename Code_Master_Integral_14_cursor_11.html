@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADéA · Atelier Dimitri Azariah Architecte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --noir: #080808; --blanc: #ffffff; --or: #b8a98a; --gris: rgba(255,255,255,0.4); --gris-fonce: #121212; --gris-fin: rgba(255,255,255,0.1); }
+
+        body { background: var(--noir); color: var(--blanc); font-family: 'Jost', sans-serif; overflow-x: hidden; line-height: 1.6; }
+        p { font-weight: 300; }
+
+        /* --- NAVIGATION --- */
+        nav { position: fixed; top: 0; width: 100%; z-index: 10000; display: flex; justify-content: space-between; padding: 2rem 3rem; mix-blend-mode: difference; }
+        .logo { font-family: 'Cormorant Gramamond', serif; font-size: 24px; color: var(--blanc); text-decoration: none; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: var(--gris); text-decoration: none; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .nav-links a.active { color: var(--blanc); border-bottom: 1px solid var(--or); }
+
+        .tab-content { display: none; min-height: 100vh; }
+        .tab-content.active { display: block; }
+
+        /* --- TYPOGRAPHIE --- */
+        .title-serif { font-family: 'Cormorant Garamond', serif; font-size: clamp(30px, 4vw, 50px); font-style: italic; font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem; color: var(--or); }
+        .subtitle-or { color: var(--or); font-size: 9px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+
+        /* --- ACCUEIL (SYSTÈME V3 IMMERSIF) --- */
+        .apple-container { height: 280vh; position: relative; background: var(--noir); }
+        .sticky-wrapper { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; }
+        .bg-master { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1590424744295-865037d6e611?auto=format&fit=crop&w=2000'); background-size: cover; background-position: center; z-index: 0; filter: brightness(0.35); }
+        .bg-layer { position: absolute; inset: 0; background-size: cover; background-position: center; transition: opacity 1.2s ease; filter: brightness(0.35); z-index: 1; opacity: 0; }
+        .bg-layer.active { opacity: 1; }
+        .content-overlay { position: relative; z-index: 10; padding-left: 8%; width: 100%; padding-right: 8%; }
+        .manifesto-block { max-width: 700px; display: none; animation: fadeInUp 1.2s forwards; }
+        .manifesto-block.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- PROJETS (SYSTÈME V10) --- */
+        #projets { padding: 140px 3% 60px; }
+        .projets-container { display: flex; gap: 60px; align-items: flex-start; }
+        .bande-composer { flex: 0 0 350px; position: sticky; top: 140px; }
+        .grid-wrapper { flex: 1; }
+        .filter-nav { margin-bottom: 3rem; display: flex; gap: 1.5rem; border-bottom: 1px solid var(--gris-fin); padding-bottom: 1rem; flex-wrap: wrap; }
+        .filter-btn { background: none; border: none; color: var(--gris); font-size: 9px; text-transform: uppercase; cursor: none; letter-spacing: 2px; padding-bottom: 5px; transition: 0.3s; }
+        .filter-btn.active { color: var(--or); border-bottom: 1px solid var(--or); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; }
+        .card { cursor: none; }
+        .card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; filter: grayscale(100%); transition: 0.6s; margin-bottom: 15px; border: 1px solid var(--gris-fin); }
+        .card:hover img { filter: grayscale(0%); border-color: var(--or); }
+
+        /* --- AGENCE & CONTACT --- */
+        #agence, #contact, #mentions, #confidentialite { padding: 160px 10% 100px; }
+        .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
+        .contact-info div { margin-bottom: 30px; }
+        .contact-form input, .contact-form textarea { background: transparent; border: none; border-bottom: 1px solid var(--gris-fin); padding: 15px 0; color: var(--blanc); width: 100%; outline: none; margin-bottom: 25px; font-family: 'Jost'; }
+        .submit-btn { background: transparent; color: var(--or); border: 1px solid var(--or); padding: 15px 40px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: none; transition: 0.3s; }
+        .submit-btn:hover { background: var(--or); color: var(--noir); }
+
+        /* --- LEGAL SECTIONS --- */
+        .legal-box { border-bottom: 1px solid var(--gris-fin); padding: 20px 0; margin-bottom: 10px; display: grid; grid-template-columns: 200px 1fr; }
+        .legal-label { color: var(--or); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- OVERLAY --- */
+        .overlay { position: fixed; inset: 0; background: var(--noir); z-index: 50000; display: none; padding: 100px 8%; overflow-y: auto; }
+        .overlay.active { display: block; }
+        .close-btn { float: right; color: var(--or); cursor: none; font-size: 10px; border: 1px solid var(--or); padding: 8px 20px; }
+
+        footer { padding: 4rem 3rem; border-top: 1px solid var(--gris-fin); display: flex; justify-content: space-between; font-size: 9px; text-transform: uppercase; color: var(--gris); }
+        footer a { color: inherit; text-decoration: none; margin-left: 20px; }
+
+        @media (max-width: 1000px) { .split-layout, .projets-container, .legal-box { display: flex; flex-direction: column; gap: 30px; } .bande-composer { position: relative; top: 0; flex: none; width: 100%; } }
+    
+        .custom-cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; background: var(--or); border-radius: 50%; pointer-events: none; z-index: 100000; opacity: 0; will-change: transform; transition: width 0.3s, height 0.3s, background 0.3s; }
+        .cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid var(--or); border-radius: 50%; pointer-events: none; z-index: 99999; opacity: 0; will-change: transform; }
+        .custom-cursor.big { width: 50px; height: 50px; background: transparent; border: 1px solid var(--or); }
+        body { cursor: none; }
+        @media (max-width: 900px) { .custom-cursor, .cursor-ring { display: none; } body { cursor: auto; } }
+</style>
+</head>
+<body>
+<div class="custom-cursor" id="dot"></div>
+<div class="cursor-ring" id="ring"></div>
+
+    <nav>
+        <a href="#" class="logo" onclick="switchTab('accueil')">AD<em>é</em>A</a>
+        <ul class="nav-links">
+            <li><a href="#" class="tab-link active" onclick="switchTab('accueil', this)">Accueil</a></li>
+            <li><a href="#" class="tab-link" onclick="switchTab('projets', this)">Projets</a></li>
+            <li><a href="#" class="tab-link" onclick="switchTab('agence', this)">L'Agence</a></li>
+            <li><a href="#" class="tab-link" onclick="switchTab('contact', this)">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="accueil" class="tab-content active">
+        <div class="apple-container">
+            <div class="sticky-wrapper">
+                <div class="bg-master"></div>
+                <div class="bg-layer active" id="bg1" style="background-image: url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000');"></div>
+                <div class="bg-layer" id="bg2" style="background-image: url('https://images.unsplash.com/photo-1600121848594-d8644e57abad?auto=format&fit=crop&w=2000');"></div>
+                
+                <div class="content-overlay">
+                    <div class="manifesto-block active" id="text1">
+                        <span class="subtitle-or">ADAPTER</span>
+                        <h1 class="title-serif" style="font-size: clamp(35px, 6vw, 75px);">Vers une Architecture,<br>sobre, Bioclimatique<br>et Résiliente</h1>
+                    </div>
+                    <div class="manifesto-block" id="text2">
+                        <span class="subtitle-or">VIVRE DURABLE</span>
+                        <p style="text-align: justify; font-size: 15px; max-width: 800px;">
+                            Chez ADéA – Atelier Dimitri Azariah Architecte, l'architecture ne se résume pas à construire : elle consiste à créer des espaces qui répondent avec précision au climat, au territoire et aux usages. Chaque projet est conçu pour vivre durable, en s'ajustant intelligemment à son environnement tout en anticipant les aléas et les besoins futurs.
+                            <br><br>
+                            Nous privilégions la sobriété, en optimisant formes et matériaux pour limiter les ressources, et la bioclimatique, en intégrant orientation solaire, ventilation naturelle, inertie thermique et gestion de l'eau. Nos constructions sont résilientes, pensées pour durer et s'adapter aux changements climatiques, tout en intégrant de manière cohérente les technologies et les énergies renouvelables.
+                            <br><br>
+                            Chaque site est analysé avec soin afin de respecter le climat local, les ressources disponibles et la culture architecturale. À travers cette démarche, vivre durable devient le fil conducteur de notre travail, traduisant un engagement clair pour une architecture intelligente, esthétique et résiliente, pensée pour le climat et pour les usages humains.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projets" class="tab-content">
+        <div class="projets-container">
+            <aside class="bande-composer" id="composer-side">
+                <span class="subtitle-or">COMPOSER</span>
+                <h2 class="title-serif">L'architecture comme langage visuel</h2>
+                <div style="font-size: 13px; text-align: justify; color: #999;">
+                    Chez ADéA, chaque projet dépasse la simple construction : il devient un dialogue entre lumière, matière, climat et espace. L'architecture s'exprime comme un langage visuel, où chaque forme, chaque ligne et chaque volume traduit une intention, une fonction et une interaction avec l'environnement.
+                    <br><br>
+                    Nos bâtiments sont pensés comme des compositions vivantes : ils respirent avec le territoire, s'adaptent au climat et évoluent dans le temps. Loin d'être de simples objets, ils racontent une histoire, reflètent une culture et incarnent notre vision d'une architecture sobre, bioclimatique et résiliente.
+                    <br><br>
+                    Chaque projet est ainsi une œuvre qui se lit par les sens et l'expérience, un art où l'esthétique et la technique se rencontrent pour donner vie à des espaces uniques, durables et inspirants.
+                </div>
+            </aside>
+
+            <div class="grid-wrapper">
+                <div class="filter-nav">
+                    <button class="filter-btn active" onclick="filterProjects('presentation', this)">Présentation (Axos)</button>
+                    <button class="filter-btn" onclick="filterProjects('all', this)">Tout</button>
+                    <button class="filter-btn" onclick="filterProjects('residentiel', this)">Résidentiel</button>
+                    <button class="filter-btn" onclick="filterProjects('public', this)">Public & Urbain</button>
+                </div>
+                <div class="grid" id="main-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="agence" class="tab-content">
+        <div class="split-layout">
+            <div>
+                <span class="subtitle-or">QUI SOMMES-NOUS ?</span>
+                <h2 class="title-serif">Une vision<br>ancrée.</h2>
+            </div>
+            <div>
+                <p><strong>ADéA – Atelier Dimitri Azariah Architecte</strong> est un cabinet d’architecture engagé dans une approche bioclimatique, sobre et résiliente. Fondé par Dimitri Azariah, architecte et urbaniste passionné par les civilisations, le territoire et l’innovation, l’atelier conçoit des bâtiments et des espaces qui s’adaptent au climat, aux usages et aux évolutions futures.</p>
+                <br>
+                <p>Notre démarche repose sur la conviction que l’architecture doit dialoguer avec son environnement : orientation solaire, ventilation naturelle, matériaux locaux et durables. Chaque projet est pensé comme un système cohérent, alliant esthétique, confort et performance énergétique, tout en respectant le territoire et la culture locale.</p>
+                <br>
+                <p>Chez ADéA, nous accompagnons nos clients depuis la conception jusqu'à la réalisation, en alliant rigueur technique, créativité et vision durable. Notre objectif est simple : créer des espaces qui durent, qui vivent avec leur environnement et qui inspirent confiance et bien-être.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="tab-content">
+        <div class="split-layout">
+            <div class="contact-info">
+                <span class="subtitle-or">PRENONS CONTACT</span>
+                <h2 class="title-serif">Parlons de<br>votre projet.</h2>
+                <p style="font-size:13px; color:#999; text-align:justify; margin-bottom:2rem;">Vous avez un projet à concevoir, à transformer ou à adapter au climat ? Chez ADéA – Atelier Dimitri Azariah Architecte, chaque collaboration commence par l'écoute et l'analyse. Nous mettons notre expertise en architecture bioclimatique, sobriété et résilience au service de votre vision et de votre territoire.</p>
+                <div style="margin-bottom:1.5rem;">
+                    <p class="subtitle-or" style="margin-bottom:8px;">Coordonnées</p>
+                    <p style="margin-bottom:4px;">📞 +33 06 52 47 23 91</p>
+                    <p style="margin-bottom:4px;">📞 +590 06 90 52 82 77</p>
+                    <p>✉️ azariah.d.architecte@gmail.com</p>
+                </div>
+                <div>
+                    <p class="subtitle-or" style="margin-bottom:8px;">Horaires</p>
+                    <p style="margin-bottom:4px;">Lun – Ven : 09:00 – 18:00</p>
+                    <p>Sam – Dim : Fermé</p>
+                </div>
+            </div>
+            <form class="contact-form" onsubmit="event.preventDefault(); alert('Message envoyé (Démo)');">
+                <input type="text" placeholder="Nom *" required>
+                <input type="text" placeholder="Téléphone">
+                <input type="email" placeholder="Courriel">
+                <textarea rows="5" placeholder="Message"></textarea>
+                <p style="font-size:10px; color:#666; margin-top:-10px;">* Indique les champs obligatoires</p>
+                <button type="submit" class="submit-btn">Envoyer</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="mentions" class="tab-content">
+        <h2 class="title-serif">Avis juridique</h2>
+        <div class="legal-box"><div class="legal-label">Nom de l'entreprise</div><div>ADéA – Atelier Dimitri Azariah Architecte</div></div>
+        <div class="legal-box"><div class="legal-label">Siège social</div><div>Lyon, France</div></div>
+        <div class="legal-box"><div class="legal-label">Email</div><div>azariah.d.architecture@gmail.com</div></div>
+        <div class="legal-box"><div class="legal-label">Téléphone</div><div>06 90 52 82 77</div></div>
+        <div class="legal-box"><div class="legal-label">Site web</div><div>www.azariaharchitecture.com</div></div>
+        <div class="legal-box"><div class="legal-label">Numéro d'identification</div><div>Veuillez saisir le numéro d'identification de votre entreprise.</div></div>
+        <div class="legal-box"><div class="legal-label">N° de TVA</div><div>Veuillez saisir votre numéro de TVA.</div></div>
+        <div class="legal-box"><div class="legal-label">Autorité réglementaire</div><div>Ordre des Architectes – France</div></div>
+    </section>
+
+    <section id="confidentialite" class="tab-content">
+        <h2 class="title-serif">Politique de confidentialité</h2>
+        <div class="legal-box"><div class="legal-label">Contrôleur de données</div><div>Veuillez entrer le nom de votre contrôleur de données.</div></div>
+        <div class="legal-box"><div class="legal-label">Données personnelles collectées</div><div>Nom, téléphone, adresse email et message saisis via le formulaire de contact.</div></div>
+        <div class="legal-box"><div class="legal-label">Objectif de la collecte des données</div><div>Les données collectées sont utilisées exclusivement pour répondre aux demandes de contact et ne sont pas transmises à des tiers.</div></div>
+    </section>
+
+    <div class="overlay" id="overlay">
+        <div class="close-btn" onclick="closeOverlay()">FERMER</div>
+        <div id="overlayBody" style="max-width:1100px; margin: 60px auto;"></div>
+    </div>
+
+    <footer>
+        <div>ADéA — Dimitri Azariah Architecte © 2026</div>
+        <div>
+            <a href="#" onclick="switchTab('mentions')">Mentions Légales</a>
+            <a href="#" onclick="switchTab('confidentialite')">Confidentialité</a>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        const db = [
+            { id:0, cat:'residentiel', title: "Bungalow ND", loc: "Sainte-Rose, Guadeloupe", surf: "55 m²", year: "2017", type: "Tiny house — Habitation", mission: "Permis de Construire", etat: "Réalisé", photo: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2", axo: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0", desc: "Le Bungalow ND est une résidence secondaire conçue pour un particulier, implantée sur une parcelle à Sainte-Rose, déjà occupée par une maison individuelle existante. Le projet tire parti de la topographie et de l'environnement naturel pour créer un petit habitat à la fois fonctionnel et ouvert sur le paysage.<br><br>Le bungalow adopte une forme pentagonale, organisée autour d'un noyau central qui distribue tous les espaces intérieurs. Cette configuration permet d'optimiser la circulation malgré une surface réduite de 55 m², tout en offrant une sensation d'espace et de fluidité.<br><br>La construction est entièrement réalisée en bois, à l'exception de la dalle en béton, ce qui confère légèreté, performance thermique et intégration harmonieuse dans le contexte naturel. La terrasse en U prolonge les espaces intérieurs et crée des perspectives visuelles sur le paysage environnant.<br><br>L'approche architecturale met l'accent sur l'échelle humaine et la simplicité formelle, tout en valorisant le site et la végétation existante. Un habitat fonctionnel, chaleureux et durable, parfaitement adapté au mode de vie du client et au climat tropical." },
+            { id:1, cat:'residentiel', title: "La Maison Louis", loc: "Lamentin, Guadeloupe", surf: "126,80 m² (179,03 m² terrasses incluses)", terrain: "3 675 m²", year: "2023", type: "Maison individuelle T4 avec mezzanine", mission: "Permis de construire", etat: "Réalisé", photo: "https://images.unsplash.com/photo-1600585154340-be6199f7d009", axo: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d", desc: "Le projet concerne la construction d'une maison individuelle de type T4 avec mezzanine pour Mme Anaïs Louis, située Route de Routa sur la commune du Lamentin, en Guadeloupe. Implantée sur une parcelle de 3 675 m², la villa développe une surface de plancher de 126,80 m², complétée par une terrasse d'entrée de 23,79 m² et une galerie de 28,44 m², portant la surface totale à 179,03 m².<br><br>La distribution intérieure sépare clairement les espaces de jour et de nuit. Le rez-de-chaussée accueille un salon de 26,61 m², une cuisine avec cellier, et une suite parentale avec dressing et salle de bain privative. Deux chambres secondaires, une salle de bain commune et un WC indépendant complètent le niveau principal. La mezzanine de 22,36 m² offre un espace supplémentaire polyvalent, baigné de lumière naturelle.<br><br>L'orientation a été soigneusement étudiée : la terrasse d'entrée s'ouvre au sud tandis que la galerie principale de 28,44 m² est exposée au nord, offrant une zone de vie extérieure fraîche et protégée du rayonnement solaire direct. Les chambres et salles de bain sont regroupées à l'ouest, isolant les zones de repos du flux de circulation principale.<br><br>La construction en maçonnerie de parpaings et toiture en tôle est certifiée conforme à la RTG 2020, optimisant la ventilation naturelle et l'isolation des parois pour limiter le recours à la climatisation." },
+            { id:2, cat:'public', title: "Le Kiosque des Abymes", loc: "Les Abymes, Guadeloupe", surf: "90,72 m² (emprise au sol)", terrain: "Domaine public", year: "2015", type: "Équipement urbain — Kiosque", mission: "Chef de projet, concepteur", etat: "Réalisé", budget: "200 000 € HT", architecte: "Max Sophiyair-Landais (architecte DPLG)", photo: "https://images.unsplash.com/photo-1517457373958-b7bdd5582fec", axo: "https://images.unsplash.com/photo-1518005020411-38b81210a197", desc: "Ce kiosque a été conçu lors de mon stage pratique au sein de l'agence Max Sophiyair-Landais Architecte (MSL Archi), implantée aux Abymes. À l'origine, le site ne comportait qu'une estrade située sur la place de la mairie. Le projet consistait à structurer cet espace existant afin d'offrir aux musiciens un lieu dédié à l'expression artistique.<br><br>Une architecture organique a été volontairement développée, en s'appuyant sur les outils de conception paramétrique explorés à l'ENSAG, notamment au sein du studio de Philippe Liveneau. L'ouvrage mesure 12 mètres de long et 5 mètres de hauteur. La toiture non conventionnelle permet la récupération des eaux pluviales, directement évacuées vers le caniveau existant.<br><br>L'éclairage nocturne est assuré par des spots LED, avec un passage des réseaux intégré aux poteaux inclinés.<br><br>Ce projet marque la première réalisation construite à grande échelle." }
+        ];
+
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            if(id === 'projets') filterProjects('presentation', document.querySelector('.filter-btn'));
+            window.scrollTo(0,0);
+        }
+
+        function filterProjects(type, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            document.getElementById('composer-side').style.display = (type === 'presentation') ? 'block' : 'none';
+            
+            const isAxo = (type === 'presentation');
+            const items = (type === 'presentation' || type === 'all') ? db : db.filter(p => p.cat === type);
+
+            document.getElementById('main-grid').innerHTML = items.map(p => `
+                <div class="card" onclick="openP(${p.id})">
+                    <img src="${isAxo ? p.axo : p.photo}?auto=format&fit=crop&w=800">
+                    <h3>${p.title}</h3>
+                    <p>${p.loc} • ${p.year}</p>
+                </div>
+            `).join('');
+        }
+
+        function openP(id) {
+            const p = db.find(x => x.id === id);
+            document.getElementById('overlayBody').innerHTML = `
+                <div class="split-layout" style="margin-bottom:50px;">
+                    <div>
+                        <span class="subtitle-or">${p.type || 'PROJET'}</span>
+                        <h2 class="title-serif">${p.title}</h2>
+                        <ul style="list-style:none; margin-top:1rem; font-size:13px; color:#999; line-height:2;">
+                            <li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Lieu</span> &nbsp; ${p.loc}</li>
+                            ${p.surf ? `<li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Surface</span> &nbsp; ${p.surf}</li>` : ''}
+                            ${p.terrain ? `<li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Terrain</span> &nbsp; ${p.terrain}</li>` : ''}
+                            <li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Année</span> &nbsp; ${p.year}</li>
+                            ${p.mission ? `<li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Mission</span> &nbsp; ${p.mission}</li>` : ''}
+                            ${p.budget ? `<li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Budget travaux</span> &nbsp; ${p.budget}</li>` : ''}
+                            ${p.architecte ? `<li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">Architecte</span> &nbsp; ${p.architecte}</li>` : ''}
+                            ${p.etat ? `<li><span style="color:#b8a98a; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">État</span> &nbsp; ${p.etat}</li>` : ''}
+                        </ul>
+                    </div>
+                    <p style="color:#ccc; font-size:13px; line-height:1.9; text-align:justify;">${p.desc}</p>
+                </div>
+                <img src="${p.photo}" style="width:100%; margin-bottom:20px; object-fit:cover; max-height:600px;">
+                <img src="${p.axo}" style="width:100%; object-fit:cover; max-height:600px;">
+            `;
+            document.getElementById('overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOverlay() { document.getElementById('overlay').classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+    </script>
+<script>
+(function() {
+    var dot = document.getElementById('dot');
+    var ring = document.getElementById('ring');
+    var mx = -200, my = -200, rx = -200, ry = -200;
+    document.addEventListener('mousemove', function(e) {
+        mx = e.clientX; my = e.clientY;
+        dot.style.opacity = '1';
+        ring.style.opacity = '0.55';
+        dot.style.transform = 'translate(' + (mx - 5) + 'px, ' + (my - 5) + 'px)';
+    });
+    (function loop() {
+        rx += (mx - rx) * 0.12;
+        ry += (my - ry) * 0.12;
+        ring.style.transform = 'translate(' + (rx - 20) + 'px, ' + (ry - 20) + 'px)';
+        requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a, button, .card, [onclick], input, select, textarea, label').forEach(function(el) {
+        el.addEventListener('mouseenter', function() { dot.classList.add('big'); });
+        el.addEventListener('mouseleave', function() { dot.classList.remove('big'); });
+    });
+})();
+</script>
+</body>
+</html>
